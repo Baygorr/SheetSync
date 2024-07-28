@@ -1,1 +1,3 @@
-# Baygorr_Repo
+# SheetSync
+# By SuperBBs team
+# Austin Bay Qi Hern
