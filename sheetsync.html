@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <link href='https://unpkg.com/css.gg@2.0.0/icons/css/trello.css' rel='stylesheet'>
+  <link href='https://unpkg.com/css.gg@2.0.0/icons/css/bell.css' rel='stylesheet'>
+  <link href='https://unpkg.com/css.gg@2.0.0/icons/css/info.css' rel='stylesheet'>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    h1 {
+      font-size: 18px;
+      margin: 0 10px;
+    }
+
+    /* SheetSync Logo */
+    /* ========================================================= */
+
+    .gg-trello {
+      box-sizing: border-box;
+      display: block;
+      transform: scale(var(--ggs, 1));
+      width: 20px;
+      height: 20px;
+      border: 2px solid;
+      border-radius: 2px;
+      margin-right: 10px; /* Adjusted margin */
+    }
+
+    /* ========================================================= */
+    /* bell icon */
+
+    .gg-bell {
+      box-sizing: border-box;
+      display: block;
+      transform: scale(var(--ggs, 1));
+      border: 2px solid;
+      border-bottom: 0;
+      width: 14px;
+      height: 14px;
+      margin-left: auto;
+      margin-right: 10px; /* Adjusted margin */
+      vertical-align: middle; /* Align icon vertically */
+    }
+
+    /* ========================================================= */
+    /* info icon */
+
+    .gg-info {
+      box-sizing: border-box;
+      display: block;
+      transform: scale(var(--ggs, 1));
+      width: 20px;
+      height: 20px;
+      border: 2px solid;
+      border-radius: 40px;
+      margin-left: 10px; /* Adjusted margin */
+      vertical-align: middle; /* Align icon vertically */
+    }
+
+    .content {
+      text-align: center;
+      margin-top: 50px;
+      margin-bottom: 50px;
+    }
+
+    p {
+      color: grey;
+      font-size: 14px;
+    }
+
+    .Scan_Google_Drive_Button {
+      margin-top: 30px;
+      margin-bottom: 70px;
+      padding: 8px 12px;
+      font-size: 14px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .Scan_Google_Drive_Button:hover {
+      background-color: #45a049;
+    }
+
+    .button {
+      margin: 10px 0;
+      margin-bottom: 30px;
+      padding: 8px 12px;
+      font-size: 14px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .button:hover {
+      background-color: #45a049;
+    }
+
+    #titlesTable {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    #titlesTable th, #titlesTable td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+      font-size: 12px;
+    }
+
+    #titlesTable th {
+      background-color: #f2f2f2;
+    }
+
+    .spreadsheet-columns {
+      padding-left: 20px;
+    }
+
+    .filter-options, .function-options {
+      margin-top: 20px;
+      text-align: left;
+    }
+
+    .filter-options select, .filter-options input,
+    .function-options select {
+      margin: 5px 0;
+      padding: 5px;
+      width: 100%;
+    }
+
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .checkbox-group label {
+      margin-right: 10px;
+      font-size: 12px;
+    }
+
+    filenamePrompt {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      width: fit-content;
+    }
+
+    #filename_label {
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+      margin-right: 10px;
+    }
+
+    #filename {
+      font-size: 16px;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      width: 200px;
+    }
+
+    #workflowList {
+    list-style-type: none; /* Remove default list bullets */
+    padding: 0;
+  }
+
+  #workflowList li {
+    background-color: #f9f9f9; /* Light grey background */
+    border: 1px solid #ddd; /* Light grey border */
+    padding: 10px;
+    margin-bottom: 5px;
+    border-radius: 4px; /* Rounded corners */
+    display: flex; /* Flexbox for layout */
+    flex-direction: column; /* Column layout */
+    align-items: flex-start; /* Align items to the start */
+  }
+
+  #workflowList li:nth-child(even) {
+    background-color: #f1f1f1; /* Slightly darker grey for alternate rows */
+  }
+
+  .workflow-details {
+    flex-grow: 1;
+  }
+
+  .workflow-filename {
+    font-weight: bold;
+  }
+
+  .workflow-interval {
+    margin-top: 5px;
+  }
+
+  .remove-button {
+    background-color: #ff4d4d; /* Red background */
+    color: white; /* White text */
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-top: 10px; /* Space between the interval and the button */
+  }
+
+  .remove-button:hover {
+    background-color: #ff1a1a; /* Darker red on hover */
+  }
+
+
+  </style>
+  <script>
+    function displaySpreadsheetTitles() {
+      google.script.run.withSuccessHandler(function(titlesAndColumns) {
+        var titlesTable = document.getElementById('titlesTable');
+        titlesTable.innerHTML = ''; // Clear previous data
+
+        // Create table header
+        var header = titlesTable.createTHead();
+        var headerRow = header.insertRow(0);
+        headerRow.insertCell(0).outerHTML = "<th>Select</th>";
+        headerRow.insertCell(1).outerHTML = "<th>Spreadsheet Titles</th>";
+
+        // Create table body
+        var tbody = document.createElement('tbody');
+        titlesAndColumns.forEach(function(item, index) {
+          var titleRow = tbody.insertRow();
+          var selectCell = titleRow.insertCell(0);
+          var checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.className = 'spreadsheet-checkbox';
+          checkbox.dataset.index = index; // Add an index to identify checkboxes
+          selectCell.appendChild(checkbox);
+
+          var titleCell = titleRow.insertCell(1);
+          titleCell.textContent = item.title;
+          titleCell.dataset.index = index; // Add an index to identify rows
+
+          // Add event listener to display columns
+          titleCell.addEventListener('click', function() {
+            var existingRow = document.getElementById('columns-' + index);
+            if (existingRow) {
+              // Replace existing row with new data
+              existingRow.innerHTML = generateColumnSelectionHtml(item.columns, index);
+            } else {
+              var columnsRow = document.createElement('tr');
+              columnsRow.id = 'columns-' + index; // Set unique ID for the row
+              columnsRow.innerHTML = generateColumnSelectionHtml(item.columns, index);
+              titleRow.after(columnsRow);
+            }
+            // Disable further clicks on this title
+            titleCell.style.pointerEvents = 'none';
+          });
+        });
+        titlesTable.appendChild(tbody);
+      }).getSpreadsheetTitlesAndColumns(); // Call the server-side function
+    }
+
+    // Generate HTML for column selection
+    function generateColumnSelectionHtml(columns, index) {
+      return '<td colspan="2">' +
+             columns.map(function(col, colIndex) {
+               return '<label><input type="checkbox" class="column-checkbox" data-index="' + index + '" data-colindex="' + colIndex + '"> ' + col + '</label><br>';
+             }).join('') +
+             '</td>';
+    }
+
+    // Function to consolidate data based on selected columns
+    function consolidateData() {
+      var selectedIndexes = [];
+      var selectedColumns = {};
+
+      // Collect selected spreadsheets and columns
+      var checkboxes = document.querySelectorAll('.spreadsheet-checkbox');
+      checkboxes.forEach(function(checkbox) {
+        if (checkbox.checked) {
+          var index = checkbox.dataset.index;
+          selectedIndexes.push(index);
+
+          // Collect selected columns for this spreadsheet
+          selectedColumns[index] = [];
+          var columnCheckboxes = document.querySelectorAll('.column-checkbox[data-index="' + index + '"]');
+          columnCheckboxes.forEach(function(colCheckbox) {
+            if (colCheckbox.checked) {
+              selectedColumns[index].push(colCheckbox.dataset.colindex);
+            }
+          });
+        }
+      });
+
+      if (selectedIndexes.length > 0) {
+        var filename = document.getElementById('filename').value;
+        if (filename) {
+          google.script.run.withSuccessHandler(function(response) {
+            alert(response);
+          }).consolidateSelectedData(selectedIndexes, selectedColumns, filename);
+        } else {
+          alert("Please enter a filename.");
+        }
+      } else {
+        alert("Please select at least one spreadsheet for consolidation.");
+      }
+    }
+
+    // Function to handle function selection
+    function handleFunctionSelect(value) {
+      window.selectedFunction = value;
+    }
+
+    // Function to run selected function
+    function runFunction() {
+      switch (window.selectedFunction) {
+        case 'connect':
+          document.getElementById('filenamePrompt').style.display = 'block';
+          document.getElementById('SchedulePrompt').style.display = 'block';
+          break;
+        case 'email':
+          alert('Email Templates function not implemented.');
+          break;
+        case 'meeting':
+          alert('Send Meeting Invite function not implemented.');
+          break;
+        case 'metrics':
+          alert('Performance Metrics function not implemented.');
+          break;
+        case 'notifications':
+          alert('Custom Notifications function not implemented.');
+          break;
+        case 'report':
+          alert('Summary Data Report function not implemented.');
+          break;
+        default:
+          alert('Please select a valid function.');
+      }
+    }
+
+    function scheduleConsolidation() {
+      var selectedIndexes = [];
+      var selectedColumns = {};
+
+      // Collect selected spreadsheets and columns
+      var checkboxes = document.querySelectorAll('.spreadsheet-checkbox');
+      checkboxes.forEach(function(checkbox) {
+        if (checkbox.checked) {
+          var index = checkbox.dataset.index;
+          selectedIndexes.push(index);
+
+          // Collect selected columns for this spreadsheet
+          selectedColumns[index] = [];
+          var columnCheckboxes = document.querySelectorAll('.column-checkbox[data-index="' + index + '"]');
+          columnCheckboxes.forEach(function(colCheckbox) {
+            if (colCheckbox.checked) {
+              selectedColumns[index].push(colCheckbox.dataset.colindex);
+            }
+          });
+        }
+      });
+
+      if (selectedIndexes.length > 0) {
+        var filename = document.getElementById('filename').value;
+        var interval = document.getElementById('scheduleInterval').value;
+        if (filename) {
+          google.script.run.withSuccessHandler(function(response) {
+            alert(response);
+            loadWorkflows();
+          }).scheduleConsolidation(selectedIndexes, selectedColumns, filename, interval);
+        } else {
+          alert("Please enter a filename.");
+        }
+      } else {
+        alert("Please select at least one spreadsheet for scheduling consolidation.");
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadWorkflows);
+
+    function loadWorkflows() {
+      var workflowList = document.getElementById('workflowList');
+      workflowList.innerHTML = ''; // Clear the current list
+
+      google.script.run.withSuccessHandler(function(workflows) {
+        workflows.forEach(function(workflow, index) {
+          var li = document.createElement('li');
+          var detailsDiv = document.createElement('div');
+          detailsDiv.className = 'workflow-details';
+
+          var filenameDiv = document.createElement('div');
+          filenameDiv.className = 'workflow-filename';
+          filenameDiv.textContent = `Filename: ${workflow.filename}`;
+
+          var intervalDiv = document.createElement('div');
+          intervalDiv.className = 'workflow-interval';
+          intervalDiv.textContent = `Interval: ${workflow.interval}`;
+
+          var removeButton = document.createElement('button');
+          removeButton.className = 'remove-button';
+          removeButton.textContent = 'Remove';
+          removeButton.onclick = function() {
+            google.script.run.withSuccessHandler(function(response) {
+              alert(response);
+              loadWorkflows(); // Reload the workflows after removal
+            }).removeScheduledWorkflow(index);
+          };
+
+          detailsDiv.appendChild(filenameDiv);
+          detailsDiv.appendChild(intervalDiv);
+          li.appendChild(detailsDiv);
+          li.appendChild(removeButton);
+          workflowList.appendChild(li);
+        });
+      }).getWorkflows();
+    }
+
+    function removeWorkflow(index) {
+      google.script.run.withSuccessHandler(function() {
+        loadWorkflows(); // Reload the workflows after removal
+      }).removeScheduledWorkflow(index);
+    }
+
+    
+  </script>
+</head>
+<body>
+  <div class="header">
+    <i class="gg-trello"></i>
+    <h1>SheetSync</h1>
+    <i class="gg-bell"></i>
+    <i class="gg-info"></i>
+  </div>
+  <div class="content">
+    <p>Sync, automate, and consolidate your Google Sheets data effortlessly.</p>
+    <button class="Scan_Google_Drive_Button" onclick="displaySpreadsheetTitles()">Scan Google Drive</button>
+    <table id="titlesTable"></table>
+    <!-- <button class="button" onclick="consolidateData()">Consolidate Data</button> -->
+  </div>
+  <div class="filter-options">
+      <h3>Advanced Filter Options</h3>
+      <input type="text" placeholder="Keywords">
+      <input type="text" placeholder="Categories">
+      <select>
+        <option>Select Range</option>
+        <option>This week</option>
+        <option>This month</option>
+        <option>Custom...</option>
+      </select>
+      <div class="checkbox-group">
+        <label><input type="checkbox"> AND</label>
+        <label><input type="checkbox"> OR</label>
+        <label><input type="checkbox"> NOT</label>
+      </div>
+      <select>
+        <option>Select Filter Template</option>
+        <option>Template 1</option>
+        <option>Template 2</option>
+      </select>
+      <button class="button">Apply Filters</button>
+    </div>
+    
+    <div class="function-options">
+      <h3>Functions</h3>
+      <select onchange="handleFunctionSelect(this.value)">
+        <option value="">Select Function</option>
+        <option value="email">Email Templates</option>
+        <option value="connect">Connect Tables</option>
+        <option value="meeting">Send Meeting Invite</option>
+        <option value="metrics">Performance Metrics</option>
+        <option value="notifications">Custom Notifications</option>
+      </select>
+      <button class="button" onclick="runFunction()">Run Function</button>
+    </div>
+
+    <div id="filenamePrompt" style="display: none;">
+      <label id="filename_label" for="filename">Enter filename: </label>
+      <input type="text" id="filename" />
+      <button class="button" onclick="consolidateData()">Save</button>
+    </div>
+
+    <div id="SchedulePrompt" style="display: none;">
+      <label id="scheduleInterval_label" for="scheduleInterval">Schedule: </label>
+      <select id="scheduleInterval">
+        <option value="hourly">Every Hour</option>
+        <option value="daily">Every Day</option>
+        <option value="weekly">Every Week</option>
+        <option value="monthly">Every Month</option>
+      </select>
+      <button class="button" onclick="scheduleConsolidation()">Schedule</button>
+    </div>
+
+
+    <h3>Scheduled Workflows</h3>
+    <ul id="workflowList">
+      <!-- The list of workflows will be dynamically generated here -->
+    </ul>
+
+</body>
+</html>
