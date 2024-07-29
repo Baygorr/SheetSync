@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      body {
+        font-family: monospace;
+        padding: 10px;
+        font-size: 20px;
+        max-width: 100%;
+        width: 80%; 
+        height: 100%; 
+        background-color:lightgray;
+        
+      }
+      h1 {
+        font-size: 16px;
+        font-family:monospace;
+      }
+      button {
+        margin-top: 10px;
+        font-family: monospace;
+        
+      }
+    </style>
+  </head>
+  <body>
+
+    <h1>Make sure you select the correct reciepients before clicking send</h1> <br>
+
+    <label for="Subject" style="padding-right: 10px;">Subject</label>
+    <input name="Subject" type="text"  id="subject">
+
+    <br><br>
+
+    <label for="Content" style="padding-bottom: 10px;">Email Content</label><br>
+    <textarea id="content" name="Content" id='Content' rows="4" cols="30" ></textarea>
+
+    <br><br>
+
+    <button onclick='sendMail()'>Send Invites</button> <br>
+    
+    <script>
+        function sendMail(){
+            var subject = document.getElementById('subject').value;
+            var content = document.getElementById('content').value;
+            google.script.run.sendEmail(subject,content);
+        }
+
+        
+    </script>
+
+  </body>
+</html>
