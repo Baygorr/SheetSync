@@ -143,3 +143,52 @@ function removeScheduledWorkflow(index) {
   userProperties.setProperty('workflows', JSON.stringify(workflows));
   return 'Workflow removed successfully!';
 }
+
+
+// email fucntion 
+function sendEmail(subjectt,contentt) {
+  var emails = []
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var selection = SpreadsheetApp.getActiveSpreadsheet().getSelection();
+  var activeRange = selection.getActiveRangeList(); //gets all te active and selected range in an array 
+  var ranges = activeRange.getRanges() //returns a list or range
+
+
+  for (i in ranges){
+    var range =  ranges[i] 
+    var rangeValues = range.getValues() //list of cell values in a range 
+
+    for (i in rangeValues){
+      var r = rangeValues[i]
+      for (i in r ){
+        if (r[i] != ""){
+          emails.push(r[i])
+        }        
+      }
+
+    }
+  }
+
+    console.log(emails)
+
+    
+
+    for (e in emails){
+      var email =  emails[e]
+      console.log(email)
+      var subject = subjectt
+      var content =  contentt
+      GmailApp.sendEmail(email,subject,content)
+    }
+    
+}
+
+
+function ScheduleMeetings() {
+  var htmlOutput = HtmlService.createHtmlOutputFromFile('Schedule Meeting')
+      .setTitle('Extra Features') .setWidth(500); // Width of the sidebar
+  SpreadsheetApp.getUi().showSidebar(htmlOutput);
+}
+
+
+
