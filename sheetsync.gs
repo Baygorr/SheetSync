@@ -2,6 +2,7 @@ function onOpen() {
   var ui = SpreadsheetApp.getUi();
   ui.createMenu('SheetSync')
     .addItem('Activate SheetSync', 'showSheetSync')
+    .addItem('Schedule Meeting','ScheduleMeetings')
     .addToUi();
 }
 
